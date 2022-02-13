@@ -18,6 +18,7 @@ namespace Contract.Actors
         private void GetHelloMessage(HelloMessage message)
         {
             _log.Debug($"Path is {_actorReference.Path}");
+            _log.Debug($"CorrelationId is {message.CorrelationId}");
             _actorReference.Ask<string>(new EngineMessage(message.CorrelationId, message.Message, Sender)).PipeTo(Sender);
         }
 

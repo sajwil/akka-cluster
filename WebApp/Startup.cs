@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using WebApp.Services;
 
 namespace WebApp
@@ -21,7 +22,10 @@ namespace WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Akka-Cluster", Version = "v1" });
+            });
             services.AddSingleton<IClusterBuilder, ClusterBuilder>();
             services.AddSingleton<WebClusterService>();
             services.AddSingleton<IClusterActorSystemService, ClusterActorSystemService>();
@@ -41,7 +45,7 @@ namespace WebApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

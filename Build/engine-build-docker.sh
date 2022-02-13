@@ -1,2 +1,6 @@
+
+#!/bin/bash
+
+echo "building engine image"
 docker build -t engine . -f ".\Engine\Dockerfile"
-docker build -t web . -f ".\WebApp\Dockerfile"
+

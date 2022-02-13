@@ -15,7 +15,7 @@ namespace Contract.Actors
 
         private void GetEngineMessage(EngineMessage message)
         {            
-            _log.Debug($"Path is {Context.Parent.Path.Address}");
+            _log.Debug($"Path is {Self.Path.Address}");
             _log.Debug($"Received message to engine {message.Message} with id {message.CorrelationId}");
             message.Sender.Tell($"Message Recieved to engine with id {message.CorrelationId}");
         } 

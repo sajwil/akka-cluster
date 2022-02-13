@@ -21,7 +21,7 @@ namespace WebApp.Services
         {
             var actorSystem = clusterBuilder.GetClusterNode();
             var router = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "api");
-            _apiActor = actorSystem.ActorOf(ApiActor.Props(router), "api");
+            _apiActor = actorSystem.ActorOf(ApiActor.Props(router), "api-actor");
         }
 
         public Task<string> GetAnswerFromCluster(string message)

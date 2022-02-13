@@ -1,6 +1,6 @@
 version: '3.7'
 
-services: 
+services:
   lighthouse:
     image: petabridge/lighthouse:latest
     hostname: lighthouse
@@ -13,10 +13,10 @@ services:
       CLUSTER_IP: "lighthouse"
       CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
 
-  engine:
+  engine0:
     image: engine
     ports:
-      - '0:9110'
+      - '6000:9110'
     environment:
       CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
       CLUSTER_PORT: 5110
@@ -24,16 +24,77 @@ services:
     depends_on:
       - "lighthouse"
 
-  web:
-    image: web
+  engine1:
+    image: engine
     ports:
-      - 0:9110
-      - "8080:5000"
-      - "44388:443"
+      - '6001:9110'
     environment:
       CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
       CLUSTER_PORT: 5110
     restart: on-failure
     depends_on:
       - "lighthouse"
-      
+
+  engine2:
+    image: engine
+    ports:
+      - '6002:9110'
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
+      CLUSTER_PORT: 5110
+    restart: on-failure
+    depends_on:
+      - "lighthouse"
+
+  web0:
+    image: web
+    ports:
+      - "7000:9110"
+      - "8080:80"
+      - "8090:443"
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
+      CLUSTER_PORT: 5110
+    restart: on-failure
+    depends_on:
+      - "lighthouse"
+
+  web1:
+    image: web
+    ports:
+      - "7001:9110"
+      - "8081:80"
+      - "8091:443"
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
+      CLUSTER_PORT: 5110
+    restart: on-failure
+    depends_on:
+      - "lighthouse"
+
+  web2:
+    image: web
+    ports:
+      - "7002:9110"
+      - "8082:80"
+      - "8092:443"
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
+      CLUSTER_PORT: 5110
+    restart: on-failure
+    depends_on:
+      - "lighthouse"
+
+  master:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locust/:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --master -H http://web0:8080 --logfile=locustfile.log
+
+  worker:
+    image: locustio/locust
+    volumes:
+      - ./locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host master --logfile=locustfile.log
