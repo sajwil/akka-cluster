@@ -1,16 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Routing;
 using Contract.Actors;
-using Contract.Messages;
 using Contract.Services;
 
 namespace WebApp.Services
 {
     public interface IClusterActorSystemService
     {
-        Task<string> GetAnswerFromCluster(string message);
+        Task<T> GetAnswerFromCluster<T>(object message);
+        void TellCluster(object message);
     }
 
     public class ClusterActorSystemService : IClusterActorSystemService
@@ -24,9 +23,14 @@ namespace WebApp.Services
             _apiActor = actorSystem.ActorOf(ApiActor.Props(router), "api-actor");
         }
 
-        public Task<string> GetAnswerFromCluster(string message)
+        public Task<T> GetAnswerFromCluster<T>(object message)
         {
-            return _apiActor.Ask<string>(new HelloMessage(Guid.NewGuid(), message));
+            return _apiActor.Ask<T>(message);
+        }
+
+        public void TellCluster(object message)
+        {
+            _apiActor.Tell(message);
         }
     }
 }

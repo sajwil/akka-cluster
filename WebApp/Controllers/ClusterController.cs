@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Contract.Messages;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Services;
 
@@ -19,22 +21,16 @@ namespace WebApp.Controllers
         [HttpGet("message")]
         public async Task<string> SendMessage(string message)
         {
-            return await _clusterSystem.GetAnswerFromCluster(message);
+            return await _clusterSystem.GetAnswerFromCluster<string>(new HelloMessage(Guid.NewGuid(), message));
         }
 
         [HttpGet("random")]
-        public async Task SendRandom()
+        public void SendRandom()
         {
             foreach (var i in Enumerable.Range(1, 100))
             {
-                await _clusterSystem.GetAnswerFromCluster(i.ToString());
+                _clusterSystem.TellCluster(new HelloMessage(Guid.NewGuid(), i.ToString()));
             }
-        }
-
-        [HttpPost("payload")]
-        public async Task SendPayload([FromBody] string payload)
-        {
-
         }
     }
 }

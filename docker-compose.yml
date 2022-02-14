@@ -14,7 +14,9 @@ services:
       CLUSTER_SEEDS: "akka.tcp://Akka-Cluster@lighthouse:4053"
 
   engine0:
-    image: engine
+    build:
+      context: .
+      dockerfile: ./Engine/Dockerfile
     ports:
       - '6000:9110'
     environment:
@@ -25,7 +27,9 @@ services:
       - "lighthouse"
 
   engine1:
-    image: engine
+    build:
+      context: .
+      dockerfile: ./Engine/Dockerfile
     ports:
       - '6001:9110'
     environment:
@@ -36,7 +40,9 @@ services:
       - "lighthouse"
 
   engine2:
-    image: engine
+    build:
+      context: .
+      dockerfile: ./Engine/Dockerfile
     ports:
       - '6002:9110'
     environment:
@@ -47,7 +53,9 @@ services:
       - "lighthouse"
 
   web0:
-    image: web
+    build:
+      context: .
+      dockerfile: ./WebApp/Dockerfile
     ports:
       - "7000:9110"
       - "8080:80"
@@ -60,7 +68,9 @@ services:
       - "lighthouse"
 
   web1:
-    image: web
+    build:
+      context: .
+      dockerfile: ./WebApp/Dockerfile
     ports:
       - "7001:9110"
       - "8081:80"
@@ -73,7 +83,9 @@ services:
       - "lighthouse"
 
   web2:
-    image: web
+    build:
+      context: .
+      dockerfile: ./WebApp/Dockerfile
     ports:
       - "7002:9110"
       - "8082:80"
@@ -90,11 +102,11 @@ services:
     ports:
       - "8089:8089"
     volumes:
-      - ./locust/:/mnt/locust
+      - ./Build/locust/:/mnt/locust
     command: -f /mnt/locust/locustfile.py --master -H http://web0:8080 --logfile=locustfile.log
 
   worker:
     image: locustio/locust
     volumes:
-      - ./locust:/mnt/locust
+      - ./Build/locust:/mnt/locust
     command: -f /mnt/locust/locustfile.py --worker --master-host master --logfile=locustfile.log
