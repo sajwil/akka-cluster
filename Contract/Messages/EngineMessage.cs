@@ -9,7 +9,7 @@ namespace Contract.Messages
         public string Message { get; }
         public IActorRef Sender { get; }
         public Guid CorrelationId { get; }
-        public object ConsistentHashKey { get { return CorrelationId; } }
+        public object ConsistentHashKey { get { return Message; } }
 
         public EngineMessage(Guid correlationId, string message, IActorRef sender)
         {

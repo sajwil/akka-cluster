@@ -13,6 +13,12 @@ namespace Contract.Actors
         {
             _actorReference = actorReference;
             Receive<HelloMessage>(x => GetHelloMessage(x));
+            Receive<ApiWorkflowMessage>(x => GetWorkflowMessage(x));
+        }
+
+        private void GetWorkflowMessage(ApiWorkflowMessage x)
+        {
+            _actorReference.Ask<string>(new WorkflowMessage(x.CorrelationId, x.Amount, Sender)).PipeTo(Sender);
         }
 
         private void GetHelloMessage(HelloMessage message)

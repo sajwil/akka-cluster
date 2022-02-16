@@ -59,6 +59,7 @@ services:
 
   web0:
     image: web
+    container_name: "frontend1"
     ports:
       - "7000:9110"
       - "8080:80"
@@ -72,6 +73,7 @@ services:
 
   web1:
     image: web
+    container_name: "frontend2"
     ports:
       - "7001:9110"
       - "8081:80"
@@ -85,6 +87,7 @@ services:
 
   web2:
     image: web
+    container_name: "frontend3"
     ports:
       - "7002:9110"
       - "8082:80"
@@ -96,15 +99,31 @@ services:
     depends_on:
       - "lighthouse"
 
+  proxy:  
+    image: nginx 
+    container_name: "api"
+    ports:   
+    - "5000:80"
+    depends_on:
+      - web0
+      - web1
+      - web2
+
   master:
     image: locustio/locust
     ports:
       - "8089:8089"
     volumes:
       - ./Build/locust/:/mnt/locust
-    command: -f /mnt/locust/locustfile.py --master -H http://web0:8080 --logfile=locustfile.log
+    command: -f /mnt/locust/locustfile.py --master --logfile=locustfile.log
 
-  worker:
+  worker1:
+    image: locustio/locust
+    volumes:
+      - ./Build/locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host master --logfile=locustfile.log
+
+  worker2:
     image: locustio/locust
     volumes:
       - ./Build/locust:/mnt/locust

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Contract.Messages;
+using Contract.Request;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Services;
 
@@ -31,6 +32,12 @@ namespace WebApp.Controllers
             {
                 _clusterSystem.TellCluster(new HelloMessage(Guid.NewGuid(), i.ToString()));
             }
+        }
+
+        [HttpPost("process")]
+        public async Task<decimal> ProcessData([FromBody] WorkflowRequest request)
+        {
+            return await _clusterSystem.GetAnswerFromCluster<decimal>(new ApiWorkflowMessage(request.CorrelationId, request.Amount));
         }
     }
 }
