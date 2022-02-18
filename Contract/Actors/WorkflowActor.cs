@@ -26,7 +26,7 @@ namespace Contract.Actors
 
             _worflowCollection[x.CorrelationId] += x.Amount;
             var currentAmount = _worflowCollection[x.CorrelationId];
-            _log.Debug($"Current Value is {currentAmount}");
+            _log.Debug($"Current Value for {x.CorrelationId} is {currentAmount}");
             x.Sender.Tell(currentAmount);
         }
 
